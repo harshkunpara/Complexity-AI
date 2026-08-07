@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complexity Analyzer AI — Algorithmic Intelligence Engine</title>
+  <meta name="description" content="Production-grade AI platform for analyzing time and space complexity, Big-O notation, nested loops, recursion, and algorithm optimization in real time." />
+  
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-300">
+
+  <!-- ==================== GLOBAL LOADING SCREEN ==================== -->
+  <div id="loading-screen" class="loading-screen" aria-hidden="true">
+    <div class="spinner-container">
+      <div class="pulse-ring"></div>
+      <div class="logo-icon-lg">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="loading-text">Initializing Complexity AI Engine...</div>
+  </div>
+
+  <!-- ==================== TOAST CONTAINER ==================== -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ==================== COMMAND PALETTE (CMD+K) ==================== -->
+  <div id="command-palette-backdrop" class="modal-backdrop hidden" tabindex="-1">
+    <div class="command-palette" role="dialog" aria-modal="true" aria-label="Command Palette">
+      <div class="command-header">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="command-input" placeholder="Type a command or search actions... (e.g. 'Analyze', 'Theme', 'Clear')" />
+        <kbd class="kbd-badge">ESC</kbd>
+      </div>
+      <div class="command-list" id="command-results">
+        <div class="command-group-title">Quick Actions</div>
+        <button class="command-item" data-action="run-analysis">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          <span>Run Complexity Analysis</span>
+          <kbd class="kbd-hint">Ctrl + Enter</kbd>
+        </button>
+        <button class="command-item" data-action="clear-editor">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          <span>Clear Code Editor</span>
+        </button>
+        <button class="command-item" data-action="toggle-theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <span>Toggle Light / Dark Mode</span>
+        </button>
+        <button class="command-item" data-action="load-sample">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span>Load Sample Algorithm (Binary Search)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN APP CONTAINER ==================== -->
+  <div class="app-wrapper">
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside id="sidebar" class="sidebar collapsed" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="#" class="sidebar-brand" id="sidebar-logo">
+          <div class="logo-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <span class="brand-text">Complexity<span class="brand-accent">AI</span></span>
+        </a>
+        <button id="sidebar-toggle-btn" class="icon-button" aria-label="Toggle Sidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 19l-7-7 7-7M19 19l-7-7 7-7"/>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#landing" class="nav-item active" data-tab="landing">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span class="nav-label">Overview</span>
+        </a>
+        <a href="#analyzer" class="nav-item" data-tab="analyzer">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          <span class="nav-label">Analyzer Studio</span>
+        </a>
+        <a href="#results" class="nav-item" data-tab="results">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="#history" class="nav-item" data-tab="history">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="nav-label">History</span>
+        </a>
+        <a href="#saved" class="nav-item" data-tab="saved">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <span class="nav-label">Saved Snippets</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="theme-toggle-sidebar" class="sidebar-action-btn" title="Toggle Theme">
+          <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <span class="nav-label">Appearance</span>
+        </button>
+        <button id="cmd-palette-btn" class="sidebar-action-btn" title="Command Palette">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h8M6 16h12"/></svg>
+          <span class="nav-label">Commands</span>
+          <kbd class="kbd-mini">⌘K</kbd>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN CONTENT AREA ==================== -->
+    <main class="main-content">
+
+      <!-- STICKY NAVBAR -->
+      <header class="top-navbar">
+        <div class="nav-container">
+          <div class="nav-left">
+            <a href="#" class="brand-link">
+              <div class="logo-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+              </div>
+              <span class="brand-title">Complexity<span class="accent-text">AI</span></span>
+              <span class="badge-v1">v2.4 PRO</span>
+            </a>
+          </div>
+
+          <nav class="center-links">
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#analyzer" class="nav-link">Studio</a>
+            <a href="#benchmarks" class="nav-link">Benchmarks</a>
+            <a href="#faq" class="nav-link">FAQ</a>
+          </nav>
+
+          <div class="nav-right">
+            <button id="theme-toggle-nav" class="icon-button-ghost" title="Toggle Theme" aria-label="Toggle Theme">
+              <svg class="sun-icon hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+              <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="icon-button-ghost" title="GitHub Repository" aria-label="GitHub Repository">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+              </svg>
+            </a>
+
+            <a href="#analyzer" class="btn-primary-glow">
+              <span>Launch Analyzer</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <!-- ==================== LANDING PAGE SECTION ==================== -->
+      <section id="landing" class="landing-section">
+        <!-- Background Ambient Glow & Particles Container -->
+        <div class="ambient-gradient"></div>
+        <div id="particles-canvas" class="particles-overlay"></div>
+
+        <!-- HERO SECTION -->
+        <div class="hero-container">
+          <div class="pill-announcement">
+            <span class="pill-dot"></span>
+            <span>Next-Gen Static Analysis Engine</span>
+            <span class="pill-arrow">→</span>
+          </div>
+
+          <h1 class="hero-title">
+            Analyze Code Complexity <br/>
+            <span class="text-gradient">At the Speed of Light.</span>
+          </h1>
+
+          <p class="hero-subtitle">
+            Instant Big-O time and space complexity breakdown, nested loop detection, recursive branch evaluation, and memory footprint projections powered by deterministic static parsing.
+          </p>
+
+          <div class="hero-cta-group">
+            <a href="#analyzer" class="btn-hero-primary ripple">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>Analyze Code Now</span>
+            </a>
+            <button id="btn-demo-sample" class="btn-hero-secondary ripple">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              <span>Load Interactive Demo</span>
+            </button>
+          </div>
+
+          <!-- Hero Preview Glass Card -->
+          <div class="hero-preview-card glass-panel">
+            <div class="window-header">
+              <div class="window-dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+              </div>
+              <div class="window-title">complexity-engine.ts — Static Inspection</div>
+              <div class="window-badge">O(n log n)</div>
+            </div>
+            <div class="hero-code-preview">
+              <pre><code><span class="code-keyword">function</span> <span class="code-func">quickSort</span>(arr: <span class="code-type">number[]</span>): <span class="code-type">number[]</span> {
+  <span class="code-keyword">if</span> (arr.length &lt;= 1) <span class="code-keyword">return</span> arr;
+  <span class="code-keyword">const</span> pivot = arr[Math.floor(arr.length / 2)];
+  <span class="code-keyword">const</span> left = arr.<span class="code-func">filter</span>(x =&gt; x &lt; pivot);
+  <span class="code-keyword">const</span> right = arr.<span class="code-func">filter</span>(x =&gt; x &gt; pivot);
+  <span class="code-keyword">return</span> [...<span class="code-func">quickSort</span>(left), pivot, ...<span class="code-func">quickSort</span>(right)];
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- METRICS & METRICS METRICS -->
+        <div class="stats-section">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" data-target="142000">142,000+</div>
+              <div class="stat-label">Snippets Analyzed</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">&lt; 12ms</div>
+              <div class="stat-label">Average Latency</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">99.8%</div>
+              <div class="stat-label">AST Detection Accuracy</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">12+</div>
+              <div class="stat-label">Languages Supported</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FEATURES GRID -->
+        <div id="features" class="features-section">
+          <div class="section-header center">
+            <div class="section-badge">Capabilities</div>
+            <h2 class="section-title">Built for Performance Engineers</h2>
+            <p class="section-subtitle">Deep algorithmic profiling without spinning up dynamic runtimes or sandboxes.</p>
+          </div>
+
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon emerald">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <h3>Big-O Time Complexity</h3>
+              <p>Identifies linear, quadratic, logarithmic, and exponential execution boundaries with mathematical bounds.</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon blue">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              </div>
+              <h3>Auxiliary Space Mapping</h3>
+              <p>Tracks stack frame expansion, dynamic memory allocations, and heap buffers across nested calls.</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon amber">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              </div>
+              <h3>Recursion & Branch Trees</h3>
+              <p>Maps divide-and-conquer recurrences, tail recursion optimizations, and depth bounds visually.</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon purple">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              </div>
+              <h3>Algorithm Classification</h3>
+              <p>Automatically flags standard sorting routines, graph traversals, dynamic programming matrix patterns, and searches.</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon red">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+              <h3>Nested Loop Detector</h3>
+              <p>Highlights polynomial iteration traps and exponential loops with line-by-line depth indicators.</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon cyan">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              </div>
+              <h3>Automated Refactoring</h3>
+              <p>Recommends optimal data structures (HashMaps, Heaps, Tries) to transform O(n²) bottlenecks into O(n).</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- BENCHMARKS / COMPARISON TABLE -->
+        <div id="benchmarks" class="benchmarks-section">
+          <div class="section-header">
+            <div class="section-badge">Performance Matrix</div>
+            <h2 class="section-title">Big-O Complexity Quick Reference</h2>
+          </div>
+
+          <div class="table-responsive glass-panel">
+            <table class="benchmark-table">
+              <thead>
+                <tr>
+                  <th>Notation</th>
+                  <th>Type</th>
+                  <th>10 Elements</th>
+                  <th>1,000 Elements</th>
+                  <th>Status / Impact</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code class="tag-green">O(1)</code></td>
+                  <td>Constant</td>
+                  <td>1 op</td>
+                  <td>1 op</td>
+                  <td><span class="badge-status optimal">Excellent</span></td>
+                </tr>
+                <tr>
+                  <td><code class="tag-green">O(log n)</code></td>
+                  <td>Logarithmic</td>
+                  <td>~3 ops</td>
+                  <td>~10 ops</td>
+                  <td><span class="badge-status optimal">Optimal</span></td>
+                </tr>
+                <tr>
+                  <td><code class="tag-blue">O(n)</code></td>
+                  <td>Linear</td>
+                  <td>10 ops</td>
+                  <td>1,000 ops</td>
+                  <td><span class="badge-status fair">Fair</span></td>
+                </tr>
+                <tr>
+                  <td><code class="tag-amber">O(n log n)</code></td>
+                  <td>Linearithmic</td>
+                  <td>~33 ops</td>
+                  <td>~10,000 ops</td>
+                  <td><span class="badge-status moderate">Acceptable</span></td>
+                </tr>
+                <tr>
+                  <td><code class="tag-red">O(n²)</code></td>
+                  <td>Quadratic</td>
+                  <td>100 ops</td>
+                  <td>1,000,000 ops</td>
+                  <td><span class="badge-status warning">Bottleneck</span></td>
+                </tr>
+                <tr>
+                  <td><code class="tag-danger">O(2ⁿ)</code></td>
+                  <td>Exponential</td>
+                  <td>1,024 ops</td>
+                  <td>1.07 × 10³⁰1 ops</td>
+                  <td><span class="badge-status critical">Critical Risk</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- FAQ SECTION -->
+        <div id="faq" class="faq-section">
+          <div class="section-header center">
+            <div class="section-badge">FAQ</div>
+            <h2 class="section-title">Frequently Asked Questions</h2>
+          </div>
+
+          <div class="faq-accordion">
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>How does static analysis calculate Big-O without running code?</span>
+                <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></summary>
+              </summary>
+              <div class="faq-answer">
+                The engine builds an Abstract Syntax Tree (AST) to parse control flow, branch depth, recursive call sites, and loop constraints. It evaluates mathematicalrecurrence relations statically without needing client side execution runtimes.
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>Which programming languages are supported?</span>
+                <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></summary>
+              </summary>
+              <div class="faq-answer">
+                JavaScript, TypeScript, Python, C++, Java, Go, Rust, C#, and Swift are natively parsed with full support for language-specific standard library complexity mappings.
+              </div>
+            </details>
+
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>Is my code sent to third-party servers?</span>
+                <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></summary>
+              </summary>
+              <div class="faq-answer">
+                No. All static AST parsing and algorithmic breakdown occurs entirely client-side in your browser environment. Your code never leaves your local session.
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== MAIN ANALYZER STUDIO ==================== -->
+      <section id="analyzer" class="analyzer-section hidden">
+        <div class="workspace-header">
+          <div>
+            <h1 class="workspace-title">Complexity Studio</h1>
+            <p class="workspace-desc">Paste code or upload script to run full static profiling.</p>
+          </div>
+
+          <div class="workspace-actions">
+            <select id="language-select" class="select-input" aria-label="Select Programming Language">
+              <option value="javascript">JavaScript (ES6+)</option>
+              <option value="typescript">TypeScript</option>
+              <option value="python">Python 3.x</option>
+              <option value="cpp">C++ 20</option>
+              <option value="java">Java 17</option>
+              <option value="go">Go 1.21</option>
+              <option value="rust">Rust 2021</option>
+            </select>
+
+            <label for="file-upload-input" class="btn-secondary" title="Upload Source File">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>Upload File</span>
+              <input type="file" id="file-upload-input" class="hidden-file-input" accept=".js,.ts,.py,.cpp,.java,.go,.rs,.cs" />
+            </label>
+
+            <button id="btn-paste-clipboard" class="btn-secondary" title="Paste from Clipboard">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+              <span>Paste</span>
+            </button>
+
+            <button id="btn-clear-code" class="btn-ghost-danger" title="Clear Editor Content">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <span>Clear</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CODE EDITOR CONTAINER -->
+        <div class="editor-window glass-panel">
+          <div class="editor-toolbar">
+            <div class="editor-tab active">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              <span id="active-filename">algorithm.js</span>
+            </div>
+            <div class="editor-info">
+              <span id="line-count-display">Lines: 12</span>
+              <span id="char-count-display">Chars: 384</span>
+              <button id="btn-copy-code" class="btn-xs-ghost" title="Copy Code">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="editor-body">
+            <div id="line-numbers" class="line-numbers" aria-hidden="true">1</div>
+            <textarea id="code-editor" class="code-textarea" spellcheck="false" placeholder="// Paste code here or select a sample algorithm...
+function twoSum(nums, target) {
+  const map = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    const complement = target - nums[i];
+    if (map.has(complement)) {
+      return [map.get(complement), i];
+    }
+    map.set(nums[i], i);
+  }
+  return [];
+}"></textarea>
+          </div>
+
+          <div class="editor-statusbar">
+            <div class="status-left">
+              <span class="status-indicator ready"></span>
+              <span>AST Parser Ready</span>
+            </div>
+            <div class="status-right">
+              <button id="btn-analyze" class="btn-analyze-glow">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>Analyze Complexity</span>
+                <kbd class="kbd-btn">Ctrl + Enter</kbd>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== DASHBOARD / RESULT PAGE ==================== -->
+      <section id="results" class="results-section hidden">
+        <div class="dashboard-header">
+          <div>
+            <div class="badge-success">Analysis Complete</div>
+            <h1 class="dashboard-title">Performance Diagnostic Report</h1>
+          </div>
+          <div class="dashboard-actions">
+            <button id="btn-save-analysis" class="btn-secondary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              <span>Save to Workspace</span>
+            </button>
+            <button id="btn-reanalyze" class="btn-primary-glow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span>Modify & Re-Run</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- SKELETON LOADER STATE (HIDDEN BY DEFAULT) -->
+        <div id="results-skeleton" class="skeleton-grid hidden">
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        </div>
+
+        <!-- METRIC METRICS DASHBOARD CARDS -->
+        <div id="results-content" class="results-content-grid">
+          <!-- CARD 1: TIME COMPLEXITY -->
+          <div class="metric-card glass-panel">
+            <div class="metric-header">
+              <span class="metric-title">Time Complexity</span>
+              <div class="metric-icon green">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+            </div>
+            <div class="metric-body">
+              <div id="res-time-complexity" class="big-o-display text-emerald">O(n)</div>
+              <div id="res-time-label" class="metric-subtitle">Linear Time Execution</div>
+            </div>
+            <div class="metric-footer">
+              <span class="metric-trend positive">✓ Scalable for large inputs</span>
+            </div>
+          </div>
+
+          <!-- CARD 2: SPACE COMPLEXITY -->
+          <div class="metric-card glass-panel">
+            <div class="metric-header">
+              <span class="metric-title">Space Complexity</span>
+              <div class="metric-icon blue">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              </div>
+            </div>
+            <div class="metric-body">
+              <div id="res-space-complexity" class="big-o-display text-blue">O(n)</div>
+              <div id="res-space-label" class="metric-subtitle">Auxiliary Hash Storage</div>
+            </div>
+            <div class="metric-footer">
+              <span class="metric-trend neutral">Requires linear memory headroom</span>
+            </div>
+          </div>
+
+          <!-- CARD 3: CONFIDENCE SCORE -->
+          <div class="metric-card glass-panel">
+            <div class="metric-header">
+              <span class="metric-title">AST Confidence</span>
+              <div class="metric-icon purple">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+            </div>
+            <div class="metric-body">
+              <div id="res-confidence-score" class="big-o-display text-purple">98%</div>
+              <div class="metric-subtitle">Deterministic Pattern Match</div>
+            </div>
+            <div class="metric-footer">
+              <span class="metric-trend positive">Zero recursion ambiguity</span>
+            </div>
+          </div>
+
+          <!-- CARD 4: DETECTED PATTERNS -->
+          <div class="metric-card glass-panel">
+            <div class="metric-header">
+              <span class="metric-title">Detected Structural Traits</span>
+              <div class="metric-icon amber">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              </div>
+            </div>
+            <div class="metric-body">
+              <div id="res-tags-container" class="tags-flex">
+                <span class="trait-tag tag-blue">Single Pass Loop</span>
+                <span class="trait-tag tag-emerald">HashMap Lookups</span>
+                <span class="trait-tag tag-amber">Non-Recursive</span>
+              </div>
+            </div>
+            <div class="metric-footer">
+              <span class="metric-trend neutral">Standard Optimal Pattern</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- VISUALIZATION DASHBOARD SECTION -->
+        <div class="dashboard-grid-two">
+          <!-- CHART 1: GROWTH CURVE -->
+          <div class="chart-card glass-panel">
+            <div class="card-header">
+              <h3 class="card-title">Complexity Growth Curve Projections</h3>
+              <span class="badge-outline">n = 10 to 1,000,000</span>
+            </div>
+            <div class="chart-container">
+              <svg id="complexity-chart-svg" viewBox="0 0 500 240" class="chart-svg">
+                <!-- SVG Chart Rendered via JavaScript -->
+              </svg>
+            </div>
+          </div>
+
+          <!-- CHART 2: EXECUTION & MEMORY PROFILER -->
+          <div class="chart-card glass-panel">
+            <div class="card-header">
+              <h3 class="card-title">Memory & Stack Footprint Projections</h3>
+              <span class="badge-outline">RAM Profile</span>
+            </div>
+            <div class="chart-container">
+              <svg id="memory-chart-svg" viewBox="0 0 500 240" class="chart-svg">
+                <!-- SVG Chart Rendered via JavaScript -->
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI EXPLANATION & REFACTORED CODE -->
+        <div class="dashboard-grid-two">
+          <div class="card-panel glass-panel">
+            <div class="card-header">
+              <div class="header-with-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <h3 class="card-title">Algorithmic Breakdown & AI Insights</h3>
+              </div>
+            </div>
+            <div id="res-explanation-body" class="card-body prose-dark">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <div class="card-panel glass-panel">
+            <div class="card-header">
+              <div class="header-with-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <h3 class="card-title">Recommended Refactored Optimization</h3>
+              </div>
+              <button id="btn-copy-refactored" class="btn-xs-ghost">Copy</button>
+            </div>
+            <div class="card-body">
+              <pre><code id="res-refactored-code" class="refactored-code-block">// Optimized refactored version will appear here...</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== HISTORY SECTION ==================== -->
+      <section id="history" class="history-section hidden">
+        <div class="workspace-header">
+          <div>
+            <h1 class="workspace-title">Analysis History</h1>
+            <p class="workspace-desc">Local record of previously profiled snippets.</p>
+          </div>
+          <button id="btn-clear-history" class="btn-ghost-danger">Clear History</button>
+        </div>
+
+        <div id="history-list" class="history-grid">
+          <!-- History items dynamically inserted via JavaScript -->
+          <div class="empty-state glass-panel">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <h3>No Previous Analyses</h3>
+            <p>Run your first code profiling session to store local history records.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SAVED SNIPPETS SECTION ==================== -->
+      <section id="saved" class="saved-section hidden">
+        <div class="workspace-header">
+          <div>
+            <h1 class="workspace-title">Saved Snippets</h1>
+            <p class="workspace-desc">Your bookmarked code routines and benchmarks.</p>
+          </div>
+        </div>
+
+        <div id="saved-list" class="saved-grid">
+          <div class="empty-state glass-panel">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <h3>No Bookmarked Snippets</h3>
+            <p>Click "Save to Workspace" on any analysis dashboard to bookmark items here.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== FOOTER ==================== -->
+      <footer class="app-footer">
+        <div class="footer-container">
+          <div class="footer-brand">
+            <div class="logo-icon-sm">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <span>Complexity AI Engine © 2026</span>
+          </div>
+          <div class="footer-links">
+            <a href="#landing">Overview</a>
+            <a href="#analyzer">Studio</a>
+            <a href="#benchmarks">Matrix</a>
+            <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- JavaScript File Script Import -->
+  <script src="script.js"></script>
+</body>
+</html>

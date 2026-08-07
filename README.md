@@ -223,9 +223,9 @@ This project is licensed under the MIT License.
 
 **Harsh**
 
-GitHub: https://github.com/YOUR_USERNAME
+GitHub: https://github.com/harshkunpara
 
-LinkedIn: https://linkedin.com/in/YOUR_LINKEDIN
+LinkedIn: https://www.linkedin.com/in/harshpatelll/
 
 ---
 

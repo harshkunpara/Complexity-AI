@@ -213,20 +213,4 @@ Feel free to fork the repository and submit a pull request.
 
 ---
 
-# 📄 License
-
-This project is licensed under the MIT License.
-
----
-
-# 👨‍💻 Author
-
-**Harsh**
-
-GitHub: https://github.com/harshkunpara
-
-LinkedIn: https://www.linkedin.com/in/harshpatelll/
-
----
-
 ## ⭐ If you found this project useful, please consider giving it a Star.
